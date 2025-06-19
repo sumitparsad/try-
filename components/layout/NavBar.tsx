@@ -14,8 +14,10 @@ import { Menu } from 'lucide-react';
 
 const NavBar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const handleYScroll = () => {
       setIsScrolled(window.scrollY > 30);
     };
@@ -30,25 +32,28 @@ const NavBar = () => {
       <div className="pointer-events-auto relative w-full max-w-[1200px] md:rounded-full">
         <div
           className={`mt-0 w-full overflow-hidden bg-transparent py-5 transition-all duration-300 ease-out md:py-[9px] ${
-            isScrolled && 'md:mt-[6px]'
+            mounted && isScrolled && 'md:mt-[6px]'
           }`}
           style={{
             contain: 'paint',
           }}
+          suppressHydrationWarning
         >
           <div
             className="absolute inset-0 transition-all duration-100 ease-out md:rounded-full"
             style={{
-              ...(isScrolled && {
+              ...(mounted && isScrolled && {
                 backdropFilter: `blur(16px)`,
                 WebkitBackdropFilter: `blur(16px)`,
               }),
             }}
+            suppressHydrationWarning
           />
           <div
             className={`${
-              isScrolled ? 'opacity-60' : 'opacity-0'
+              mounted && isScrolled ? 'opacity-60' : 'opacity-0'
             } absolute inset-0 bg-[#424242] transition-all duration-300 ease-out md:rounded-full`}
+            suppressHydrationWarning
           />
 
           <div className="mx-auto w-full px-6">

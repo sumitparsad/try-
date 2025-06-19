@@ -64,19 +64,25 @@ type IconData = Awaited<ReturnType<typeof fetchSimpleIcons>>;
 
 export default function IconCloud({ iconSlugs }: DynamicCloudProps) {
   const [data, setData] = useState<IconData | null>(null);
+  const [mounted, setMounted] = useState(false);
   const { theme } = useTheme();
 
   useEffect(() => {
+    setMounted(true);
     fetchSimpleIcons({ slugs: iconSlugs }).then(setData);
   }, [iconSlugs]);
 
   const renderedIcons = useMemo(() => {
-    if (!data) return null;
+    if (!data || !mounted) return null;
 
     return Object.values(data.simpleIcons).map((icon) =>
-      renderCustomIcon(icon, 'dark'),
+      renderCustomIcon(icon, theme || 'dark'),
     );
-  }, [data, theme]);
+  }, [data, theme, mounted]);
+
+  if (!mounted) {
+    return <div style={{ height: '400px' }} />; // Placeholder with consistent height
+  }
 
   return (
     // @ts-ignore

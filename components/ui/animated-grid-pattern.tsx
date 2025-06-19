@@ -36,7 +36,8 @@ export default function AnimatedGridPattern({
   const id = useId();
   const containerRef = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [squares, setSquares] = useState(() => generateSquares(numSquares));
+  const [squares, setSquares] = useState<Array<{id: number; pos: number[]; colorIndex: number}>>([]);
+  const [mounted, setMounted] = useState(false);
 
   function getPos() {
     return [
@@ -71,6 +72,7 @@ export default function AnimatedGridPattern({
 
   // Update squares to animate in
   useEffect(() => {
+    setMounted(true);
     if (dimensions.width && dimensions.height) {
       setSquares(generateSquares(numSquares));
     }
@@ -107,6 +109,7 @@ export default function AnimatedGridPattern({
         className,
       )}
       {...props}
+      suppressHydrationWarning
     >
       <defs>
         <pattern
@@ -126,7 +129,7 @@ export default function AnimatedGridPattern({
       </defs>
       <rect width="100%" height="100%" fill={`url(#${id})`} />
       <svg x={x} y={y} className="overflow-visible">
-        {squares.map(({ pos: [x, y], id, colorIndex }, index) => (
+        {mounted && squares.map(({ pos: [x, y], id, colorIndex }, index) => (
           <motion.rect
             initial={{ opacity: 0 }}
             animate={{ opacity: maxOpacity }}
